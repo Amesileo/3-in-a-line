@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>3-in-a-line</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				height: 100vh;
+				margin: 0;
+				background: linear-gradient(243deg, #bae1ff, #c5bffc);
+				background-size: 120% 120%;
+				animation: gradient-animation 12s ease infinite;
+			}
+
+			h1 {
+				margin-bottom: 20px;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				grid-gap: 20px; /* Added gap between cells */
+				margin-bottom: 20px;
+			}
+
+			.cell {
+				width: 100px;
+				height: 100px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background-color: #ffffff;
+				border: 2px solid #2181ff;
+				border-radius: 5px;
+				font-size: 14px;
+				text-align: center;
+				padding: 5px;
+				cursor: pointer;
+				box-shadow: #4b4b4b3d 5px 5px 5px;
+				transition: all 0.3s ease;
+			}
+
+			.cell:hover,
+			button:hover {
+				transform: scale(1.1);
+			}
+
+			.cell.greyed {
+				background-color: #d3d3d3;
+				pointer-events: none;
+			}
+
+			.message {
+				font-size: 18px;
+				color: green;
+				margin-bottom: 20px;
+			}
+
+			button {
+				padding: 10px 20px;
+				font-size: 16px;
+				cursor: pointer;
+				background-color: #ffffff;
+				border: 2px solid #2181ff;
+				border-radius: 5px;
+				transition: all 0.3s ease;
+				box-shadow: #4b4b4b3d 5px 5px 5px;
+			}
+
+			@keyframes gradient-animation {
+				0% {
+					background-position: 0% 50%;
+				}
+				50% {
+					background-position: 100% 50%;
+				}
+				100% {
+					background-position: 0% 50%;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<h1 style="text-align: center">
+			3-in-a-line<br />
+			✨Management Edition✨
+		</h1>
+		<div class="message" id="message"></div>
+		<div class="grid" id="grid"></div>
+		<button id="reset">Reset</button>
+
+		<script>
+			const items = [
+				"'Just having to reboot windows'",
+				"'F*cking Microsoft!'",
+				"Office needs an install",
+				"'Huh...!'",
+				"But how does it solve hallucinations?",
+				"Randomly goes for a walk",
+				"'But is it in Zoho?'",
+				"Phones senior member of another company",
+				"Starts a new excel sheet",
+				"Random burst of laughter",
+				"'Async'",
+				"'Synergy'",
+			];
+
+			const gridElement = document.getElementById("grid");
+			const messageElement = document.getElementById("message");
+			const resetButton = document.getElementById("reset");
+			let selectedCells = [];
+
+			function shuffleArray(array) {
+				return array.sort(() => Math.random() - 0.5);
+			}
+
+			function createGrid() {
+				gridElement.innerHTML = "";
+				messageElement.textContent = "";
+				selectedCells = [];
+
+				const shuffledItems = shuffleArray([...items]);
+
+				for (let i = 0; i < 9; i++) {
+					const cell = document.createElement("div");
+					cell.classList.add("cell");
+					cell.textContent = shuffledItems[i];
+					cell.dataset.index = i;
+
+					cell.addEventListener("click", () => handleCellClick(cell));
+
+					gridElement.appendChild(cell);
+				}
+			}
+
+			function handleCellClick(cell) {
+				cell.classList.add("greyed");
+				selectedCells.push(parseInt(cell.dataset.index));
+
+				if (checkWin()) {
+					messageElement.textContent = "You won!";
+				}
+			}
+
+			function checkWin() {
+				const winningCombinations = [
+					[0, 1, 2],
+					[3, 4, 5],
+					[6, 7, 8], // Rows
+					[0, 3, 6],
+					[1, 4, 7],
+					[2, 5, 8], // Columns
+					[0, 4, 8],
+					[2, 4, 6], // Diagonals
+				];
+
+				return winningCombinations.some((combination) =>
+					combination.every((index) => selectedCells.includes(index))
+				);
+			}
+
+			resetButton.addEventListener("click", createGrid);
+
+			createGrid();
+		</script>
+	</body>
+</html>
